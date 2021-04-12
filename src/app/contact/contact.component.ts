@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { flyInOut } from '../animations/app.animation';
+import { expand, flyInOut } from '../animations/app.animation';
+import { FeedbackService } from '../services/feedback.service';
 
 import { Feedback, ContactType } from '../shared/feedback';
 
@@ -14,7 +15,8 @@ import { Feedback, ContactType } from '../shared/feedback';
 		'style': 'display: block;'
 	},
 	animations: [
-		flyInOut()
+		flyInOut(),
+    expand()
 	]
 })
 export class ContactComponent implements OnInit {
@@ -52,8 +54,16 @@ export class ContactComponent implements OnInit {
       'email':         'Email not in valid format.'
     },
   };
+  
+  visible = {
+    'form': true,
+    'spinner': false,
+    'preview': false
+  };
+  errMess: string;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,
+    private feedbackService: FeedbackService) {
     this.createForm();
    }
 
@@ -99,6 +109,7 @@ export class ContactComponent implements OnInit {
   onSubmit() {
     this.feedback = this.feedbackForm.value;
     console.log(this.feedback);
+    this.submitFeedback(this.feedback);
     this.feedbackForm.reset({
       firstname: '',
       lastname: '',
@@ -109,6 +120,21 @@ export class ContactComponent implements OnInit {
       message: ''
     });
     this.feedbackFormDirective.resetForm();
+  }
+
+  submitFeedback(feedback: Feedback) {
+    this.visible.form = false;
+    this.visible.spinner = true;
+    this.feedbackService.postFeedback(feedback)
+    .subscribe(feedbackdata => { 
+      this.visible.spinner = false;
+      this.feedback = feedbackdata;
+      this.visible.preview = true;
+      setTimeout(() => {
+        this.visible.preview = false;
+        this.visible.form = true;
+      }, 5000);
+    }, errmsg => this.errMess = <any>errmsg);
   }
 
 }
