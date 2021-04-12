@@ -35,6 +35,7 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatSliderModule } from "@angular/material/slider";
 import { HttpClientModule } from "@angular/common/http";
 import { baseURL } from './shared/baseurl';
+import { ProcessHttpmsgService } from './services/process-httpmsg.service';
 
 
 @NgModule({
@@ -75,7 +76,8 @@ import { baseURL } from './shared/baseurl';
     DishService,
     PromotionService,
     LeaderService,
-    {provide: 'BaseURL', useValue: baseURL}
+    {provide: 'BaseURL', useValue: baseURL},
+    ProcessHttpmsgService
   ],
   entryComponents: [
     LoginComponent

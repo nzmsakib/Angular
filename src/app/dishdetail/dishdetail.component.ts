@@ -40,6 +40,8 @@ export class DishdetailComponent implements OnInit {
     }
   }
 
+  errMess: string;
+
   constructor(private dishservice: DishService,
     @Inject('BaseURL') public BaseURL,
     private route: ActivatedRoute,
@@ -50,7 +52,7 @@ export class DishdetailComponent implements OnInit {
   ngOnInit() {
     this.dishservice.getDishIds().subscribe(dishIds => this.dishIds = dishIds);
     this.route.params.pipe(switchMap((params: Params) => this.dishservice.getDish(params['id'])))
-      .subscribe(dish => { this.dish = dish; this.setPrevNext(dish.id); });
+      .subscribe(dish => { this.dish = dish; this.setPrevNext(dish.id); }, errmsg => this.errMess = <any>errmsg);
   }
 
   setPrevNext(dishId: string) {
